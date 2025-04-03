@@ -1,4 +1,3 @@
-
 from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models.functions import Distance
 from django.db.models import Q
@@ -6,7 +5,7 @@ from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Issue, IssueImage
 from .serializers import (
@@ -19,7 +18,6 @@ from .serializers import (
 )
 from users.permissions import IsMunicipalUser, IsOwnerOrMunicipal
 
-# Create your views here.
 class IssueViewSet(viewsets.ModelViewSet):
     """
     API endpoint for issue management.
@@ -30,7 +28,7 @@ class IssueViewSet(viewsets.ModelViewSet):
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]  # Added JSONParser
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['type', 'status', 'priority']
     
@@ -70,6 +68,37 @@ class IssueViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
+    
+    def create(self, request, *args, **kwargs):
+        """
+        method to handle both JSON and form data
+        """
+        if request.content_type == 'application/json':
+            # Handle JSON data
+            data = request.data
+            serializer_data = {
+                'title': data.get('title'),
+                'description': data.get('description'),
+                'type': data.get('issue_type', 'OTHER'),  # Map issue_type to type
+                'latitude': None,
+                'longitude': None
+            }
+            
+            # Extract coordinates from location object if present
+            location = data.get('location', {})
+            if location and 'coordinates' in location:
+                # GeoJSON has [longitude, latitude] order
+                serializer_data['longitude'] = location['coordinates'][0]
+                serializer_data['latitude'] = location['coordinates'][1]
+            
+            serializer = self.get_serializer(data=serializer_data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        else:
+            # Proceed with standard form data handling
+            return super().create(request, *args, **kwargs)
     
     @action(detail=False, methods=['post'])
     def nearby(self, request):

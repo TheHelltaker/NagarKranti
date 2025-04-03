@@ -50,8 +50,8 @@ class IssueCreateSerializer(serializers.ModelSerializer):
         required=False,
         write_only=True
     )
-    latitude = serializers.FloatField(write_only=True)
-    longitude = serializers.FloatField(write_only=True)
+    latitude = serializers.FloatField(write_only=True, required=True)
+    longitude = serializers.FloatField(write_only=True, required=True)
     
     class Meta:
         model = Issue
@@ -59,6 +59,14 @@ class IssueCreateSerializer(serializers.ModelSerializer):
             'title', 'description', 'type', 'latitude', 'longitude',
             'images'
         ]
+    
+    def validate(self, data):
+        # Make sure both latitude and longitude are provided
+        if 'latitude' not in data or 'longitude' not in data:
+            raise serializers.ValidationError(
+                "Both latitude and longitude are required."
+            )
+        return data
     
     def create(self, validated_data):
         # Extract and remove images from validated data
