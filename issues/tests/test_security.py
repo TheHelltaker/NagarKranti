@@ -5,7 +5,7 @@ from django.contrib.gis.geos import Point
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APIClient
 from rest_framework import status
-from issues.models import Issue, IssueImage
+from issues.models import Issue
 
 User = get_user_model()
 
