@@ -20,7 +20,7 @@ class UserRegistrationAPITest(APITestCase):
             'type': User.UserType.CITIZEN
         }
         
-        # Create a municipal user for authentication tests if needed
+        # Create a municipal user for testing
         self.municipal_user = User.objects.create_user(
             username='testmunicipal',
             email='municipal@example.com',
