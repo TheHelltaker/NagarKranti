@@ -19,13 +19,12 @@ class IssueAdmin(GISModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
     date_hierarchy = 'created_at'
     inlines = [IssueImageInline]
-    
-    # Map settings will be used for the OSMWidget
-    gis_widget_kwargs = {
-        'default_lon': 78.9629,
-        'default_lat': 20.5937,
-        'default_zoom': 5
-    }
+
+    # gis_widget_kwargs = {
+    #     'default_lat': 20.5937,   # Latitude for center of India
+    #     'default_lon': 78.9629,   # Longitude for center of India
+    #     'default_zoom': 5
+    # }
 
 @admin.register(IssueImage)
 class IssueImageAdmin(admin.ModelAdmin):
