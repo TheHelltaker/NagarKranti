@@ -8,7 +8,7 @@ django-leaflet==0.31.0
 djangorestframework==3.16.0
 djangorestframework-simplejwt==5.5.0
 drf-yasg==1.21.10
-gdal=3.10.2
+gdal==3.10.2
 inflection==0.5.1
 packaging==24.2
 pillow==11.1.0
