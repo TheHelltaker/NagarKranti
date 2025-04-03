@@ -5,7 +5,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'nagarkranti_test',
-        'USER': 'nkadmin',
+        'USER': 'postgres',
         'PASSWORD': 'sysadmin',
         'HOST': 'localhost',
         'PORT': '5432',

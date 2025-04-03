@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.contrib.gis.db import models as gis_models
 from django.utils.translation import gettext_lazy as _
@@ -59,7 +58,7 @@ class Issue(models.Model):
     priority = models.CharField(
         max_length=10,
         choices=PriorityType.choices,
-        default=PriorityType.NORMAL,
+        default=PriorityType.NA,
         verbose_name=_('Priority')
     )
     
